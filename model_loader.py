@@ -1,8 +1,11 @@
 import torch
 from unsloth import FastLanguageModel
+import wandb
 # from peft import LoraConfig, AutoPeftModelForCausalLM, prepare_model_for_kbit_training, get_peft_model
 
 def load_model(max_seq_length, dtype, load_in_4bit, model_name='unsloth/mistral-7b-instruct-v0.2-bnb-4bit'):
+    wandb.init(project="Artifacts Registry", job_type="training")
+
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name =model_name,
         max_seq_length=max_seq_length,
@@ -50,6 +53,17 @@ def load_model(max_seq_length, dtype, load_in_4bit, model_name='unsloth/mistral-
                         ]
                     )
     
+    # Create Artifact object
+    model.save_pretrained("mistral_lora")
+    tokenizer.save_pretrained("mistral_lora")
+    artifact = wandb.Artifact(
+        name="mistral-7b-lora",
+        type="model"
+    )
+    artifact.add_dir("mistral_lora")
+    wandb.log_artifact(artifact)
+
+    wandb.finish()
     # r: The rank of the low-rank matrices in LoRA; higher values can capture more information but increase memory usage.
 
 

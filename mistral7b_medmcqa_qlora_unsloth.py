@@ -34,11 +34,35 @@ data = train_data('data/train.json')
 dataset = instruction_tuned_dataset(data)
 
 model, tokenizer = load_model(max_seq_length, dtype, load_in_4bit)
+wandb.init(
+    project="LLM Finetuning",
+    job_type="training",
+    name="mistral-lora-medmcqa"
+)  
 trainer = define_trainer(model, tokenizer, dataset, max_seq_length)
 trainer_stats = trainer.train()
 trainer.push_to_hub()
+wandb.finish()
 
+# Create a run in the project
+run = wandb.init(
+    project="LLM Finetuning",
+    notes="commit message for the run",
+    job_type="inference",
+    config={
+        "num_train_epochs":1,
+        "per_device_train_batch_size":8,
+        "max_steps":5000, 
+        "max_seq_length":2048,
+        "learning_rate": 2e-4
+    }
+)
 val_data = valid_data()
 model, tokenizer = load_model_for_inference(max_seq_length, dtype, load_in_4bit)
 accuracy = calculate_acc(val_data, model, tokenizer)
+# log metrics
+wandb.log({"accuracy": accuracy})
+# finish the run
+wandb.finish()
+
 print(f'Accuracy : {accuracy}')

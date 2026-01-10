@@ -2,7 +2,8 @@ from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from unsloth import is_bfloat16_supported
 from trl import SFTTrainer # transformer RL library - Supervised FineTuning Trainer
 
-def define_trainer(model, tokenizer, dataset, max_seq_length):
+def define_trainer(model, tokenizer, dataset, max_seq_length): 
+
     training_arguments = TrainingArguments(
                 output_dir="mistral-lora-finetuned-medmcqa",
                 per_device_train_batch_size = 8, # The batch size per GPU/TPU core
