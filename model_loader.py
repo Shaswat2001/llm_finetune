@@ -2,11 +2,7 @@ import torch
 from unsloth import FastLanguageModel
 # from peft import LoraConfig, AutoPeftModelForCausalLM, prepare_model_for_kbit_training, get_peft_model
 
-max_seq_length = 2048 # Choose any! Unsloth also supports RoPE (Rotary Positinal Embedding) scaling internally.
-dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
-load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
-
-def load_model(model_name='unsloth/mistral-7b-instruct-v0.2-bnb-4bit'):
+def load_model(max_seq_length, dtype, load_in_4bit, model_name='unsloth/mistral-7b-instruct-v0.2-bnb-4bit'):
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name =model_name,
         max_seq_length=max_seq_length,
@@ -124,7 +120,7 @@ def load_model(model_name='unsloth/mistral-7b-instruct-v0.2-bnb-4bit'):
 
     return model, tokenizer
 
-def load_model_for_inference(model_name='srao0996/mistral-lora-finetuned-medmcqa'):
+def load_model_for_inference(max_seq_length, dtype, load_in_4bit, model_name='srao0996/mistral-lora-finetuned-medmcqa'):
     model, tokenizer = FastLanguageModel.from_pretrained(
         model_name = model_name,
         max_seq_length=max_seq_length,

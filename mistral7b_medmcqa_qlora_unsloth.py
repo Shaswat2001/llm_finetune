@@ -22,15 +22,23 @@ from inference import calculate_acc
 from huggingface_hub import notebook_login
 notebook_login()
 
+# python library for Weights & Biases API
+import wandb
+wandb.login()
+
+max_seq_length = 2048 # Choose any! Unsloth also supports RoPE (Rotary Positinal Embedding) scaling internally.
+dtype = None # None for auto detection. Float16 for Tesla T4, V100, Bfloat16 for Ampere+
+load_in_4bit = True # Use 4bit quantization to reduce memory usage. Can be False.
+
 data = train_data('data/train.json')
 dataset = instruction_tuned_dataset(data)
 
-model, tokenizer = load_model()
-trainer = define_trainer()
+model, tokenizer = load_model(max_seq_length, dtype, load_in_4bit)
+trainer = define_trainer(model, tokenizer, dataset, max_seq_length)
 trainer_stats = trainer.train()
 trainer.push_to_hub()
 
 val_data = valid_data()
-model, tokenizer = load_model_for_inference()
+model, tokenizer = load_model_for_inference(max_seq_length, dtype, load_in_4bit)
 accuracy = calculate_acc(val_data, model, tokenizer)
 print(f'Accuracy : {accuracy}')

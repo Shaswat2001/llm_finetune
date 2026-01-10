@@ -24,15 +24,13 @@ def normalize(text):
     text = re.sub(r'\s+', ' ', text)           # normalize spaces
     return text.strip()
 
-print(list_repo_files("srao0996/mistral-lora-finetuned-medmcqa"))
-
-FastLanguageModel.for_inference(model) # Enable native 2x faster inference
-
 # import gc
 # gc.collect()
 # torch.cuda.empty_cache()
 
 def calculate_acc(val_data_df, model, tokenizer):
+    print(list_repo_files("srao0996/mistral-lora-finetuned-medmcqa"))
+    FastLanguageModel.for_inference(model) # Enable native 2x faster inference
     inputs = tokenizer(
         val_data_df['text'][4],
         return_tensors = "pt",
